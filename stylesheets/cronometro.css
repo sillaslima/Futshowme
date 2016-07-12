@@ -1,9 +1,9 @@
 body {
 	font-family:Trebuchet MS;
-	font-size:14px;
+	font-size:18px;
 }
 .navegador {
-	width:140px;
+	width:640px;
 	border:1px dashed;
 	background-color:#E6E6FA;
 	padding: 4px 4px;
