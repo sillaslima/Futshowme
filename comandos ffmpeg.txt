@@ -1,0 +1,17 @@
+#Iniciar a gravação da live/camera
+python Camera_record_start.py
+
+#Copiar fluxo de video da live para a pasta local
+ffmpeg -i rtsp://192.168.42.1:554/live -crf 30 -preset ultrafast -r 30 -codec:v copy saida46.avi
+
+
+#Extrair o 25 segundo do arquivo local para um novo video
+ffmpeg -i saida46.avi -vcodec copy -ss 00:00:25 -t 00:00:50 -f avi pipe:1 | cat > /home/stp/xi/Xiaomi_Yi-master/Standalone_scripts/vide_extraido/test5.avi
+
+#Parar a gravação da live/camera
+python Camera_record_stop.py
+
+
+#Comando para concatenar videos no python
+
+"ffmpeg","-i", video_intro, "-i", video_intermediario, "-filter_complex", "[0:v] [1:v] concat=n=2:v=1 [v]", "-map","[v]", nome_final]
