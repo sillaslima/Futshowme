@@ -14,8 +14,11 @@ srv.send('{"msg_id":257,"token":0}')
 
 data = srv.recv(512)
 if "rval" in data:
-	token = re.findall('"param": (.+) }',data)[0]	
+	token = re.findall('"param": (.+) }',data)[0]
+	print('RVAL existe em data')	
 else:
+	print('RVAL NAO existe em data')
+	print('DATA RECEBE SRV.RECV(512)')		
 	data = srv.recv(512)
 	if "rval" in data:
 		token = re.findall('"param": (.+) }',data)[0]	

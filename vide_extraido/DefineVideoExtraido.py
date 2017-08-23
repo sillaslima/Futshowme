@@ -3,11 +3,12 @@ import os,shutil,time
 import glob
 import subprocess
 from random import randint
+import threading
 
 
 def geraNome():
 	a = randint(0,90000)
-	ext ='.avi'
+	ext ='.mp4'
 	nome_arquivo = str(a)+ext
 	return nome_arquivo
 def retira_audio(video):
@@ -71,32 +72,49 @@ def concatena_slow (video_audio, video_slow):
 		print('PROBLEMAS AO CONCATENAR VIDEOS')
 	return nome_concatena
 
-def concatena_intro(video_intermediario):
-	print("--------VAMOS CONCATENAR O VIDEO INTRO COM O SEM AUDIO E SLOW--------")
-	print("--------VIDEO INTRO RECEBIDO",video_intermediario)
-	#video_intro="Intro_futshow.avi"
-	video_intro="/home/stp/xi/Xiaomi_Yi-master/Standalone_scripts/vide_extraido/intro/FutShow_kde10.avi"
-	nome_final=geraNome()
+def concatena_slow (video_audio, video_slow):
+	print("--------VAMOS CONCATENAR O VIDEO SEM AUDIO COM SLOW MOTION--------")
+	print("--------VIDEO SEM AUDIO RECEBIDO",video_audio)
+	print("--------VIDEO ORIGINAL RECEBIDO",video_slow)
+	video_intro="/home/lima/auto_python/GeraNome/Futplay/Futshowme/vide_extraido/video_intro/FutPlay.mp4"
+	nome_concatena=geraNome()
 	print(video_intro)
-	concatenar_final = [
+	concatenar = [
+	# "ffmpeg",
+	#  "-i",
+	#  video_audio,
+	#  "-i",
+	#  video_slow,
+	#  "-filter_complex",
+	#  "[0:v] [1:v] concat=n=2:v=1 [v]",
+	#  "-map","[v]",
+	#  nome_concatena
 	"ffmpeg",
 	 "-i",
-	 video_intro,
+	 video_audio,
 	 "-i",
-	 video_intermediario,
+	 video_slow,
+	 "-i",
+	 video_intro,
 	 "-filter_complex",
-	 "[0:v] [1:v] concat=n=2:v=1 [v]",
+	 "[0:v:0] [1:v:0] concat=n=3:v=1 [v]",
 	 "-map","[v]",
-	 nome_final]
-	print('----------------APLICANDO EFEITO PARA CONCATENAR VIDEO INTRO COM INTERMEDIARIO------------------')
-	concat_final = subprocess.Popen(concatenar_final,stdout=subprocess.PIPE, stderr=subprocess.STDOUT,universal_newlines=True)
-	saida_final = concat_final.wait()
-	if saida_final == 0:
-		print('VIDEOS INTRO E INTERMEDIARIO CONCATENADO COM SUCESSO',nome_final)
-		
+	 nome_concatena
+	 ]
+	print(concatenar)
+	print('----------------APLICANDO PARA CONCATENAR VIDEO SEM AUDO COM SLOW MOTION------------------')
+	concat_video = subprocess.Popen(concatenar,stdout=subprocess.PIPE, stderr=subprocess.STDOUT,universal_newlines=True)
+	saida_concat = concat_video.wait()
+	if saida_concat == 0:
+		print('VIDEOS CONCATENADO COM SUCESSO',nome_concatena)
+		rm = os.unlink(video_audio)
+		rm = os.unlink(video_slow)
+		#mv = shutil.move(nome_concatena, '/home/lima/auto_python/GeraNome/reproduzir/')
+		print('move com sucesso')
 	else:
-		print('PROBLEMAS AO CONCATENAR VIDEOS DE INTRODUÇÃO')
-	return nome_final
+		print('PROBLEMAS AO CONCATENAR VIDEOS')
+	return nome_concatena
+
 
 print ('---------INICIANDO A VERIFICAÇÃO E EDIÇÃO DE VIDEOS---------')
 roda = True
@@ -111,20 +129,37 @@ while True:
 
 		if len(lista_videos_retirar_audio) > 0:
 			print('Lista de videos na pasta',lista_videos_retirar_audio)
+
 			for i in range(len(lista_videos_retirar_audio)):
 				print('chamando a função para retirar o Audio',lista_videos_retirar_audio[i])
+					
 				nome_audio=retira_audio(lista_videos_retirar_audio[i])
 				print('Video sem Audio Gerado',nome_audio)
+				#print('tempo de execução', (end_time_retira_audio - start_retira_audio))
 				print('chamando a função para gerar o SLOW',nome_audio)
 				gera_slow=gerar_slow(nome_audio)
 				print('Video com Slow Motion gerado',gera_slow)
 				print('chamando a função para concatenar videos',gera_slow)
 				print('e',nome_audio)
-				gera_concatena=concatena_slow(nome_audio,gera_slow)
-				print('Video Concatenado gerado com sucesso',gera_concatena)
-				print('chamando a função para concatenar video de intro',gera_concatena)
-				gera_intro=concatena_intro(gera_concatena)
-				print('Video Intro Concatenado  e gerado com sucesso',gera_intro)
+				#gera_concatena=concatena_slow(nome_audio,gera_slow)
+				th = threading.Thread(target=concatena_slow, args=(nome_audio,gera_slow))
+				th.start()
+				#print('Video Concatenado gerado com sucesso')
+	#print('Video Concatenado gerado com sucesso')
+			# for i in range(len(lista_videos_retirar_audio)):
+			# 	print('chamando a função para retirar o Audio',lista_videos_retirar_audio[i])
+			# 	nome_audio=retira_audio(lista_videos_retirar_audio[i])
+			# 	print('Video sem Audio Gerado',nome_audio)
+			# 	print('chamando a função para gerar o SLOW',nome_audio)
+			# 	gera_slow=gerar_slow(nome_audio)
+			# 	print('Video com Slow Motion gerado',gera_slow)
+			# 	print('chamando a função para concatenar videos',gera_slow)
+			# 	print('e',nome_audio)
+			# 	gera_concatena=concatena_slow(nome_audio,gera_slow)
+			# 	print('Video Concatenado gerado com sucesso',gera_concatena)
+			# 	print('chamando a função para concatenar video de intro',gera_concatena)
+			# 	gera_intro=concatena_intro(gera_concatena)
+			# 	print('Video Intro Concatenado  e gerado com sucesso',gera_intro)
 						
 		else:
 			print('não existe arquivo .avi na pasta')
@@ -134,32 +169,3 @@ while True:
 			print('saindo')
 			break
 			exit(1)
-
-
-
-
-
-
-
-
-
-# lista_videos_retirar_audio = glob.glob('*.avi')
-# print(type(lista_videos_retirar_audio))
-
-# print('Lista de videos na pasta',lista_videos_retirar_audio)
-# for i in range(len(lista_videos_retirar_audio)):
-# 	print('chamando a função para retirar o Audio',lista_videos_retirar_audio[i])
-# 	nome_audio=retira_audio(lista_videos_retirar_audio[i])
-# 	print('Video sem Audio Gerado',nome_audio)
-# 	print('chamando a função para gerar o SLOW',nome_audio)
-# 	gera_slow=gerar_slow(nome_audio)
-# 	print('Video com Slow Motion gerado',gera_slow)
-# 	print('chamando a função para concatenar videos',gera_slow)
-# 	print('e',nome_audio)
-# 	gera_concatena=concatena_slow(nome_audio,gera_slow)
-# 	print('Video Concatenado gerado com sucesso',gera_concatena)
-# 	print('chamando a função para concatenar video de intro',gera_concatena)
-# 	gera_intro=concatena_intro(gera_concatena)
-# 	print('Video Intro Concatenado  e gerado com sucesso',gera_intro)
-
-		
