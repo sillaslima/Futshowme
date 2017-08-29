@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 # encoding: windows-1250
 #
-# Res Andy 
+# Res Andy
+#Sillas
 
 import os, re, sys, time, socket
 from settings import camaddr
