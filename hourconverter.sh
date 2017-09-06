@@ -35,9 +35,9 @@ trataCronometro $tempoPassado
 horacorte=`echo $RETORNO`
 trataCronometro $tempoFuturo
 horaFutura=`echo $RETORNO`
-sleep 16
+sleep 8
 
-mkdir $workspace
+mkdir -p $workspace
 
 ffmpeg -i videoCamera.avi -vcodec copy -ss $horacorte -t $horaFutura -f avi pipe:1 | cat > $workspace/$videoCaptura.avi
 
