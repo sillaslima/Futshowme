@@ -8,7 +8,7 @@ import threading
 
 def geraNome():
 	a = randint(0,90000)
-	ext ='.mp4'
+	ext ='.avi'
 	nome_arquivo = str(a)+ext
 	return nome_arquivo
 def retira_audio(video):
@@ -76,7 +76,7 @@ def concatena_slow (video_audio, video_slow):
 	print("--------VAMOS CONCATENAR O VIDEO SEM AUDIO COM SLOW MOTION--------")
 	print("--------VIDEO SEM AUDIO RECEBIDO",video_audio)
 	print("--------VIDEO ORIGINAL RECEBIDO",video_slow)
-	video_intro="/home/lima/auto_python/GeraNome/Futplay/Futshowme/vide_extraido/video_intro/FutPlay.mp4"
+	video_intro="/home/sillas/futTerca/Futshowme/vide_extraido/nome_concatena.avi"
 	nome_concatena=geraNome()
 	print(video_intro)
 	concatenar = [
@@ -89,6 +89,10 @@ def concatena_slow (video_audio, video_slow):
 	#  "[0:v] [1:v] concat=n=2:v=1 [v]",
 	#  "-map","[v]",
 	#  nome_concatena
+	#"ffmpeg",
+	#"-i", video_intro, "-i", video_intermediario,
+	 #"-filter_complex", "[0:v] [1:v] concat=n=2:v=1 [v]", "-map","[v]", nome_final]
+
 	"ffmpeg",
 	 "-i",
 	 video_audio,
@@ -97,7 +101,7 @@ def concatena_slow (video_audio, video_slow):
 	 "-i",
 	 video_intro,
 	 "-filter_complex",
-	 "[0:v:0] [1:v:0] concat=n=3:v=1 [v]",
+	 "[0:v] [1:v] [2:v] concat=n=3:v=1 [v]",
 	 "-map","[v]",
 	 nome_concatena
 	 ]
@@ -109,7 +113,7 @@ def concatena_slow (video_audio, video_slow):
 		print('VIDEOS CONCATENADO COM SUCESSO',nome_concatena)
 		rm = os.unlink(video_audio)
 		rm = os.unlink(video_slow)
-		#mv = shutil.move(nome_concatena, '/home/lima/auto_python/GeraNome/reproduzir/')
+		mv = shutil.move(nome_concatena, './tmp/video_reproduzir/')
 		print('move com sucesso')
 	else:
 		print('PROBLEMAS AO CONCATENAR VIDEOS')
@@ -124,7 +128,7 @@ while True:
 	
 	if verifica_video == 1:
 		print ('----------------Verificando se existem VIDEOS na pasta-----------------')
-		lista_videos_retirar_audio = glob.glob('*.avi')
+		lista_videos_retirar_audio = glob.glob('./tmp/video_extraido/*.avi')
 		print(type(lista_videos_retirar_audio))
 
 		if len(lista_videos_retirar_audio) > 0:
