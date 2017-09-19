@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python Camera_record_stop.py
+#python Camera_record_stop.py
 
 pkill -f cronometro.sh
 
