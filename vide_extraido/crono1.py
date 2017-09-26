@@ -28,12 +28,12 @@ def captura (tempo):
 
 i=0
 x = datetime.timedelta(seconds=i)
-opcao = int(input('1-CAPTURAR 2- para Cancelar a verificação: '))
-if opcao ==1:
-	th = threading.Thread(target=cronometro, args=())
-	th.start()
-	#tempo=cronometro()
-	print(th)
+#opcao = int(input('1-CAPTURAR 2- para Cancelar a verificação: '))
+#if opcao ==1:
+#	th = threading.Thread(target=cronometro, args=())
+#	th.start()
+#	#tempo=cronometro()
+#	print(th)
 
-else:
-	print(a)
+#else:
+#	print(a)
